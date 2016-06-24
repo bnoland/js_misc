@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Eyes</title>
+    <style>
+      /* TODO: Make the eyes centered on the page. */
+      #eye-container {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    
+      .eye {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border: 1px solid black;
+        border-radius: 40px;
+      }
+      #left-eye {
+        left: 30px;
+        top: 30px;
+      }
+      #right-eye {
+        left: 130px;
+        top: 30px;
+      }
+      
+      .pupil {
+        position: absolute;
+        
+        /* No need to position the pupils separately, since the positions are absolute. */
+        left: 20px;
+        top: 20px;
+        
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+    
+      // TODO: Are pageX and pageY standardized?
+    
+      // Positions a pupil relative to an eye based on a mouse move event.
+      function positionPupil(eye, pupil, event) {
+        var eyeX = eye.offsetLeft + eye.offsetWidth / 2;
+        var eyeY = eye.offsetTop + eye.offsetHeight / 2;
+        var mouseX = event.pageX;
+        var mouseY = event.pageY;
+        
+        var deltaX = mouseX - eyeX;
+        var deltaY = mouseY - eyeY;
+        var dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        var padding = 5;
+        var limit = eye.offsetWidth / 2 - pupil.offsetWidth / 2 - padding;
+        var factor = dist > limit ? limit : dist;
+        
+        var centerX = eye.offsetWidth / 2 - pupil.offsetWidth / 2;
+        var centerY = eye.offsetHeight / 2 - pupil.offsetHeight / 2;
+        
+        pupil.style.left = (centerX + factor * deltaX / dist) + "px";
+        pupil.style.top = (centerY + factor * deltaY / dist) + "px";
+      }
+    
+      function initialize() {
+        var leftEye = document.querySelector("#left-eye");
+        var leftPupil = document.querySelector("#left-pupil");
+        var rightEye = document.querySelector("#right-eye");
+        var rightPupil = document.querySelector("#right-pupil");
+        
+        window.addEventListener("mousemove", function(event) {
+          positionPupil(leftEye, leftPupil, event);
+          positionPupil(rightEye, rightPupil, event);
+        });
+      }
+      
+      window.onload = initialize;
+    </script>
+    
+    <div id="eye-container">
+      <div id="left-eye" class="eye">
+        <div id="left-pupil" class="pupil"></div>
+      </div>
+      
+      <div id="right-eye" class="eye">
+        <div id="right-pupil" class="pupil"></div>
+      </div>
+    </div>
+  </body>
+</html>

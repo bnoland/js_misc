@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Paint</title>
+    <style>
+      .dot {
+        border-radius: 4px;
+        width: 8px;
+        height: 8px;
+        position: absolute;
+      }
+      #canvas {
+        border: 1px solid black;
+        width: 600px;
+        height: 400px;
+      }
+      .color-input {
+        width: 3em;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Places a point centered at position (x, y) on the canvas.
+      function drawPoint(x, y) {
+        var canvas = document.querySelector("#canvas");
+        var dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.backgroundColor = currentColor();
+        dot.style.left = (x - 4) + "px";
+        dot.style.top = (y - 4) + "px";
+        canvas.appendChild(dot);
+      }
+      
+      // Removes everything drawn on the canvas.
+      function clearCanvas() {
+        var canvas = document.querySelector("#canvas");
+        while (canvas.firstChild != null) {
+          canvas.removeChild(canvas.firstChild);
+        }
+      }
+      
+      // Returns the current color, which is gathered from the color input boxes.
+      function currentColor() {
+        var redInput = document.querySelector("#red-input");
+        var greenInput = document.querySelector("#green-input");
+        var blueInput = document.querySelector("#blue-input");
+        
+        return "rgb(" + Number(redInput.value) + "," +
+                + Number(greenInput.value) + "," +
+                + Number(blueInput.value) + ")";
+      }
+      
+      // Was the given event triggered with a mouse button pressed?
+      // NOTE: Apparently ``buttons'' is not available everywhere, but at least one of
+      // ``which'' or ``buttons'' certainly is. Hence the need for this function.
+      // (Source: ``Eloquent JavaScript'', chapter 14)
+      function buttonPressed(event) {
+        return event.buttons != null ? event.buttons != 0 : event.which != 0;
+      }
+      
+      function initialize() {
+        // Prevent the body from doing weird things on mouse moves. Before I set this
+        // it behaved as though I was trying to select text...
+        window.addEventListener("mousemove", function(event) {
+          event.preventDefault();
+        });
+      
+        // Register the canvas event handlers.
+        var canvas = document.querySelector("#canvas");
+        canvas.addEventListener("mousedown", function(event) {
+          drawPoint(event.pageX, event.pageY);
+        });
+        canvas.addEventListener("mousemove", function(event) {
+          if (buttonPressed(event)) {
+            drawPoint(event.pageX, event.pageY);
+          }
+        });
+        
+        // Register the clear button event handler.
+        var clearButton = document.querySelector("#clear-button");
+        clearButton.addEventListener("click", clearCanvas);
+      }
+      
+      window.onload = initialize;
+    </script>
+    <!-- The drawing canvas. -->
+    <div id="canvas"></div>
+    
+    <!-- Controls. -->
+    <button id="clear-button">Clear</button>
+    <label for="red-input">R</label>
+    <input id="red-input" class="color-input" type="text" value="0"></input>
+    <label for="green-input">G</label>
+    <input id="green-input" class="color-input" type="text" value="0"></input>
+    <label for="blue-input">B</label>
+    <input id="blue-input" class="color-input" type="text" value="0"></input>
+  </body>
+</html>
